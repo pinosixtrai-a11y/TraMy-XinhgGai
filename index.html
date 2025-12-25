@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas 🎄</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            height: 100vh;
+            background: url('pinonen.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .tree-name {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 
+                3px 3px 0 #c94b4b,
+                -1px -1px 0 #c94b4b,
+                1px -1px 0 #c94b4b,
+                -1px 1px 0 #c94b4b,
+                1px 1px 0 #c94b4b,
+                0 0 20px rgba(255, 215, 0, 0.8);
+            z-index: 10;
+            pointer-events: none;
+            font-family: 'Georgia', serif;
+            letter-spacing: 8px;
+            animation: name-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes name-glow {
+            0%, 100% { 
+                text-shadow: 
+                    3px 3px 0 #c94b4b,
+                    -1px -1px 0 #c94b4b,
+                    1px -1px 0 #c94b4b,
+                    -1px 1px 0 #c94b4b,
+                    1px 1px 0 #c94b4b,
+                    0 0 20px rgba(255, 215, 0, 0.8);
+            }
+            50% { 
+                text-shadow: 
+                    3px 3px 0 #c94b4b,
+                    -1px -1px 0 #c94b4b,
+                    1px -1px 0 #c94b4b,
+                    -1px 1px 0 #c94b4b,
+                    1px 1px 0 #c94b4b,
+                    0 0 40px rgba(255, 215, 0, 1),
+                    0 0 60px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .christmas-tree {
+            font-size: 120px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: gentle-sway 3s ease-in-out infinite;
+            user-select: none;
+        }
+
+        .christmas-tree:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes gentle-sway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        .tree-text {
+            font-size: 24px;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
+            cursor: pointer;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .slideshow-container {
+            display: none;
+            width: 66%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slideshow-container.active {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slides-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #c94b4b 0%, #4b134f 100%);
+        }
+
+        .slide-img-wrapper {
+            width: 100%;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #c94b4b 0%, #4b134f 100%);
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .slide-text {
+            padding: 50px 30px;
+            text-align: center;
+            color: white;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-text h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-text p {
+            font-size: 18px;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .final-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a1929 0%, #1a237e 100%);
+            padding: 60px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-tree-wrapper {
+            width: 100%;
+            max-width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .final-tree-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: tree-glow 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(100, 200, 255, 0.6));
+        }
+
+        @keyframes tree-glow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 40px rgba(100, 200, 255, 0.6));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 60px rgba(100, 200, 255, 0.9));
+                transform: scale(1.02);
+            }
+        }
+
+        .final-text {
+            color: white;
+            text-align: center;
+        }
+
+        .final-text h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; text-shadow: 3px 3px 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        .final-text p {
+            font-size: 20px;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .slide-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .slide-counter {
+            font-size: 16px;
+            font-weight: bold;
+            color: #c94b4b;
+            margin-right: 15px;
+            min-width: 50px;
+        }
+
+        .santa-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #00CED1 0%, #1E90FF 100%);
+            padding: 60px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .santa-gif-wrapper {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .santa-gif {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .santa-text {
+            color: white;
+            text-align: center;
+        }
+
+        .santa-text h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            animation: text-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes text-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .santa-text p {
+            font-size: 22px;
+            font-style: italic;
+            opacity: 0.95;
+            animation: fade-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes fade-pulse {
+            0%, 100% { opacity: 0.95; }
+            50% { opacity: 0.7; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            top: -10px;
+            animation: confetti-fall linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(120vh) rotate(360deg);
+            }
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #c94b4b;
+            transform: scale(1.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #c94b4b;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .slideshow-container {
+                width: 95%;
+                max-width: none;
+            }
+            .slide-img-wrapper {
+                height: 320px;
+            }
+            .slide-text {
+                padding: 30px 20px;
+            }
+            .slide-text h2 {
+                font-size: 18px;
+            }
+            .slide-text p {
+                font-size: 14px;
+            }
+            .christmas-tree {
+                font-size: 80px;
+            }
+            .tree-text {
+                font-size: 18px;
+            }
+            .tree-name {
+                font-size: 36px;
+                letter-spacing: 6px;
+            }
+            .final-tree-wrapper {
+                max-width: 350px;
+                height: 400px;
+            }
+            .final-text h1 {
+                font-size: 32px;
+            }
+            .final-text p {
+                font-size: 16px;
+            }
+            .final-slide {
+                padding: 40px 20px;
+            }
+            .slide-counter {
+                font-size: 14px;
+                min-width: 45px;
+            }
+            .santa-gif-wrapper {
+                max-width: 450px;
+                height: 320px;
+            }
+            .santa-text h1 {
+                font-size: 36px;
+            }
+            .santa-text p {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slideshow-container {
+                width: 98%;
+            }
+            .slide-img-wrapper {
+                height: 280px;
+            }
+            .slide-text {
+                padding: 25px 15px;
+            }
+            .slide-text h2 {
+                font-size: 16px;
+            }
+            .slide-text p {
+                font-size: 13px;
+            }
+            .christmas-tree {
+                font-size: 70px;
+            }
+            .tree-text {
+                font-size: 16px;
+            }
+            .tree-name {
+                font-size: 32px;
+                letter-spacing: 5px;
+            }
+            .indicator {
+                width: 10px;
+                height: 10px;
+            }
+            .close-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+            .final-tree-wrapper {
+                max-width: 280px;
+                height: 350px;
+            }
+            .final-text h1 {
+                font-size: 28px;
+            }
+            .final-text p {
+                font-size: 14px;
+            }
+            .final-slide {
+                padding: 30px 15px;
+            }
+            .slide-counter {
+                font-size: 13px;
+                min-width: 40px;
+            }
+            .santa-gif-wrapper {
+                max-width: 350px;
+                height: 280px;
+            }
+            .santa-text h1 {
+                font-size: 28px;
+            }
+            .santa-text p {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .slideshow-container {
+                max-width: 1100px;
+            }
+            .slide-img-wrapper {
+                height: 520px;
+            }
+            .final-tree-wrapper {
+                max-width: 600px;
+                height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="snow-canvas"></canvas>
+
+    <audio id="bgMusic" loop>
+        <source src="pino.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <div class="tree-container" id="treeContainer">
+            <div class="tree-name">PINO</div>
+            <div class="christmas-tree" id="tree">🎄</div>
+            <div class="tree-text">ấn vào</div>
+        </div>
+
+        <div class="slideshow-container" id="slideshow">
+            <button class="close-btn" id="closeBtn">×</button>
+            
+            <div class="slides-wrapper" id="slidesWrapper">
+                <div class="slides" id="slides">
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino1.jpg" alt="Christmas 1">
+                        </div>
+                        <div class="slide-text">
+                            <h2>🎅 Giáng Sinh An Lành</h2>
+                            <p>Chúc bạn một mùa Giáng sinh ấm áp bên gia đình và người thân yêu</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino2.jpg" alt="Christmas 2">
+                        </div>
+                        <div class="slide-text">
+                            <h2>⭐ Niềm Vui Tràn Đầy</h2>
+                            <p>Mong rằng niềm vui và tiếng cười sẽ luôn ở bên bạn trong dịp lễ này</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino3.jpg" alt="Christmas 3">
+                        </div>
+                        <div class="slide-text">
+                            <h2>🎁 Ước Mơ Thành Hiện Thực</h2>
+                            <p>Chúc mọi ước mơ của bạn đều trở thành hiện thực trong năm mới</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino4.jpg" alt="Christmas 4">
+                        </div>
+                        <div class="slide-text">
+                            <h2>❄️ Bình An Và May Mắn</h2>
+                            <p>Gửi đến bạn những lời chúc bình an và may mắn nhất</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino5.jpg" alt="Christmas 5">
+                        </div>
+                        <div class="slide-text">
+                            <h2>🔔 Hạnh Phúc Tràn Đầy</h2>
+                            <p>Chúc bạn một mùa lễ hội tràn ngập hạnh phúc và yêu thương</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <img src="pino6.jpg" alt="Christmas 6">
+                        </div>
+                        <div class="slide-text">
+                            <h2>🌟 Năm Mới Tốt Lành</h2>
+                            <p>Chúc bạn một năm mới thật nhiều sức khỏe, hạnh phúc và thành công!</p>
+                        </div>
+                    </div>
+                    <div class="final-slide">
+                        <div class="final-tree-wrapper">
+                            <img src="tree.jpg" class="final-tree-img" alt="Christmas Tree">
+                        </div>
+                        <div class="final-text">
+                            <h1>🎅 Merry Christmas! 🎅</h1>
+                            <p>Chúc bạn và gia đình một mùa lễ thật ấm áp và hạnh phúc! ❤️</p>
+                        </div>
+                    </div>
+                    <div class="santa-slide">
+                        <div class="confetti" id="confetti"></div>
+                        <div class="santa-gif-wrapper">
+                            <img src="noel.gif" class="santa-gif" alt="Santa Dancing">
+                        </div>
+                        <div class="santa-text">
+                            <h1>🎅 Ho Ho Ho! 🎁</h1>
+                            <p>Ông già Noel đang mang quà đến cho bạn đây!</p>
+                            <p style="margin-top: 15px; font-size: 18px;">✨ Hãy mở slide tiếp theo nhé! ✨</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-img-wrapper">
+                            <video src="pino7.mp4" autoplay loop muted playsinline></video>
+                        </div>
+                        <div class="slide-text">
+                            <h2>🎁 Quà Đây! 🎁</h2>
+                            <p>Đây là món quà đặc biệt dành cho TràMyy trong mùa Giáng sinh này Merry Christmas!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-indicators" id="indicators">
+                <span class="slide-counter" id="slideCounter">1/7</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Snow effect
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const snowflakes = [];
+        const numFlakes = 150;
+
+        class Snowflake {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2 + 1;
+                this.speed = Math.random() * 1 + 0.5;
+                this.wind = Math.random() * 0.5 - 0.25;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += this.wind;
+
+                if (this.y > canvas.height) {
+                    this.y = 0;
+                    this.x = Math.random() * canvas.width;
+                }
+
+                if (this.x > canvas.width) {
+                    this.x = 0;
+                } else if (this.x < 0) {
+                    this.x = canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numFlakes; i++) {
+            snowflakes.push(new Snowflake());
+        }
+
+        function animateSnow() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            snowflakes.forEach(flake => {
+                flake.update();
+                flake.draw();
+            });
+            requestAnimationFrame(animateSnow);
+        }
+
+        animateSnow();
+
+        // Create confetti
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            if (!confettiContainer) return;
+            
+            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.opacity = Math.random() * 0.7 + 0.3;
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        createConfetti();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Slideshow functionality
+        const tree = document.getElementById('tree');
+        const treeContainer = document.getElementById('treeContainer');
+        const slideshow = document.getElementById('slideshow');
+        const closeBtn = document.getElementById('closeBtn');
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slidesContainer = document.getElementById('slides');
+        const indicatorsContainer = document.getElementById('indicators');
+        const slideCounter = document.getElementById('slideCounter');
+        const bgMusic = document.getElementById('bgMusic');
+
+        let currentSlide = 0;
+        const totalSlides = 9;
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        // Create indicators
+        for (let i = 0; i < totalSlides; i++) {
+            const indicator = document.createElement('div');
+            indicator.className = 'indicator';
+            if (i === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => goToSlide(i));
+            indicatorsContainer.appendChild(indicator);
+        }
+
+        const indicators = document.querySelectorAll('.indicator');
+
+        function updateSlide() {
+            slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            slideCounter.textContent = `${currentSlide + 1}/${totalSlides}`;
+            indicators.forEach((ind, idx) => {
+                ind.classList.toggle('active', idx === currentSlide);
+            });
+        }
+
+        function goToSlide(n) {
+            currentSlide = Math.max(0, Math.min(n, totalSlides - 1));
+            updateSlide();
+        }
+
+        tree.addEventListener('click', () => {
+            slideshow.classList.add('active');
+            treeContainer.style.display = 'none';
+            bgMusic.play();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            slideshow.classList.remove('active');
+            treeContainer.style.display = 'flex';
+            currentSlide = 0;
+            updateSlide();
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+        });
+
+        // Touch and mouse events for swipe
+        slidesWrapper.addEventListener('mousedown', startDrag);
+        slidesWrapper.addEventListener('touchstart', startDrag);
+        slidesWrapper.addEventListener('mousemove', drag);
+        slidesWrapper.addEventListener('touchmove', drag);
+        slidesWrapper.addEventListener('mouseup', endDrag);
+        slidesWrapper.addEventListener('mouseleave', endDrag);
+        slidesWrapper.addEventListener('touchend', endDrag);
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            slidesContainer.style.transition = 'none';
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            const diff = currentX - startX;
+            const movePercent = (diff / slidesWrapper.offsetWidth) * 100;
+            slidesContainer.style.transform = `translateX(calc(-${currentSlide * 100}% + ${movePercent}%))`;
+        }
+
+        function endDrag(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            slidesContainer.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            const diff = currentX - startX;
+            const threshold = slidesWrapper.offsetWidth * 0.2;
+
+            if (diff > threshold && currentSlide > 0) {
+                currentSlide--;
+            } else if (diff < -threshold && currentSlide < totalSlides - 1) {
+                currentSlide++;
+            }
+
+            updateSlide();
+        }
+    </script>
+</body>
+</html>
